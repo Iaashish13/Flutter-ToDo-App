@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/Screens/add_task_screen.dart';
+import 'package:todo_app/models/task.dart';
 import '../Widgets/task_list.dart';
 
 class TasksScreen extends StatefulWidget {
@@ -8,12 +9,24 @@ class TasksScreen extends StatefulWidget {
 }
 
 class _TasksScreenState extends State<TasksScreen> {
+  List<Task> tasks = [
+    Task(name: 'Buy Eggs'),
+    Task(name: 'Buy bread'),
+    Task(name: 'Buy meat'),
+  ];
   Widget buildBottomSheet(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: AddTaskScreen(),
+        child: AddTaskScreen(
+          addTaskCallback: (newTaskTitle) {
+            setState(() {
+              tasks.add(Task(name: newTaskTitle));
+            });
+            Navigator.pop(context);
+          },
+        ),
       ),
     );
   }
@@ -25,9 +38,10 @@ class _TasksScreenState extends State<TasksScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: buildBottomSheet);
+            context: context,
+            isScrollControlled: true,
+            builder: buildBottomSheet,
+          );
         },
         backgroundColor: Colors.lightBlueAccent,
         child: Icon(
@@ -68,7 +82,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   height: 4.0,
                 ),
                 Text(
-                  '12 Tasks',
+                  '${tasks.length} Tasks',
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.white,
@@ -86,7 +100,7 @@ class _TasksScreenState extends State<TasksScreen> {
                   topRight: Radius.circular(30.0),
                 ),
               ),
-              child: TaskList(),
+              child: TaskList(tasks: tasks),
             ),
           ),
         ],
